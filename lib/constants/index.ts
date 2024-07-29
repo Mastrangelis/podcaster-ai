@@ -1,3 +1,5 @@
+import { ClerkMiddlewareOptions } from "@clerk/nextjs/server";
+
 export const sidebarLinks = [
   {
     imgURL: "/icons/home.svg",
@@ -101,3 +103,30 @@ export const podcastData = [
       "https://lovely-flamingo-139.convex.cloud/api/storage/221ee4bd-435f-42c3-8e98-4a001e0d806e",
   },
 ];
+
+export const clerkAppearanceOptions = {
+  layout: {
+    socialButtonsVariant: "iconButton",
+    logoImageUrl: "/icons/auth-logo.svg",
+  },
+  elements: {
+    socialButtonsIconButton: {
+      border: "1px solid rgba(255, 255, 255, 0.2) !important",
+    },
+    dividerLine: {
+      textColor: "white",
+      borderColor: "white",
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+    },
+    input: {
+      backgroundColor: "#1b1f29",
+      textColor: "white",
+      placeholderColor: "#15171C",
+    },
+  },
+  variables: {
+    colorBackground: "#15171c",
+    colorPrimary: "",
+    colorText: "white",
+  },
+};
