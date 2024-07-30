@@ -26,6 +26,9 @@ export const generateAudioAction = action({
 export const generateThumbnailAction = action({
   args: { prompt: v.string() },
   handler: async (_, { prompt }) => {
+    console.log({
+      prompt,
+    });
     const response = await openai.images.generate({
       model: "dall-e-3",
       prompt,
