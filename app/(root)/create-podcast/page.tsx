@@ -1,3 +1,4 @@
+import CreatePodcastForm from "@/components/forms/CreatePodcastForm";
 import React from "react";
 
 const CreatePodcastPage = () => {
@@ -6,6 +7,8 @@ const CreatePodcastPage = () => {
       <section className="flex flex-col gap-5">
         <h1 className="text-white-1 font-bold text-20">Create Podcast</h1>
       </section>
+
+      <CreatePodcastForm />
     </div>
   );
 };
