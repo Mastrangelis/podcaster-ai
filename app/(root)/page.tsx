@@ -18,7 +18,7 @@ export const Home = () => {
               key={podcast._id}
               title={podcast.podcastTitle}
               description={podcast.podcastDescription}
-              imgUrl={podcast.imageUrl}
+              imgUrl={podcast.imageUrl ?? ""}
               podcastId={podcast._id}
             />
           ))}
