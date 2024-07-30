@@ -8,6 +8,12 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "dutiful-husky-222.convex.cloud",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };
