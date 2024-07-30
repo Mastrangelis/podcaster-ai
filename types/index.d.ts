@@ -31,18 +31,18 @@ export interface TopPodcastersProps {
 export interface PodcastProps {
   _id: Id<"podcasts">;
   _creationTime: number;
-  audioStorageId: Id<"_storage"> | null;
+  audioStorageId?: Id<"_storage">;
   user: Id<"users">;
   podcastTitle: string;
   podcastDescription: string;
-  audioUrl: string | null;
-  imageUrl: string | null;
-  imageStorageId: Id<"_storage"> | null;
+  audioUrl?: string;
+  imageUrl?: string;
+  imageStorageId?: Id<"_storage">;
   author: string;
   authorId: string;
   authorImageUrl: string;
   voicePrompt: string;
-  imagePrompt: string | null;
+  imagePrompt?: string;
   voiceType: string;
   audioDuration: number;
   views: number;
@@ -101,6 +101,7 @@ export interface AudioProps {
   author: string;
   imageUrl: string;
   podcastId: string;
+  isPlaying?: boolean;
 }
 
 export interface AudioContextType {

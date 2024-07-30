@@ -24,7 +24,9 @@ export default function RootLayout({
     <ConvexClerkProvider>
       <AudioProvider>
         <html lang="en">
-          <body className={`${manrope.className}`}>{children}</body>
+          <body className={`md:overflow-hidden ${manrope.className}`}>
+            {children}
+          </body>
         </html>
       </AudioProvider>
     </ConvexClerkProvider>

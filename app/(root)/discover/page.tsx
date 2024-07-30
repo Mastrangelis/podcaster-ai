@@ -1,13 +1,53 @@
-import React from "react";
+"use client";
 
-const DiscoverPage = () => {
+import EmptyState from "@/components/EmptyState";
+import LoaderSpinner from "@/components/LoaderSpinner";
+import PodcastCard from "@/components/cards/PodcastCard";
+import Searchbar from "@/components/Searchbar";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
+import React from "react";
+import { SearchParamProps } from "@/types";
+
+const Discover = ({ searchParams: { search } }: SearchParamProps) => {
+  const podcastsData = useQuery(api.podcasts.getPodcastBySearch, {
+    search: (search as string) || "",
+  });
+
   return (
-    <div className="mt-9 flex flex-col gap-9">
-      <section className="flex flex-col gap-5">
-        <h1 className="text-white-1 font-bold text-20">Discover</h1>
-      </section>
+    <div className="flex flex-col gap-9">
+      <Searchbar />
+      <div className="flex flex-col gap-9">
+        <h1 className="text-20 font-bold text-white-1">
+          {!search ? "Discover Trending Podcasts" : "Search results for "}
+          {search && <span className="text-white-2">{search}</span>}
+        </h1>
+        {podcastsData ? (
+          <>
+            {podcastsData.length > 0 ? (
+              <div className="podcast_grid">
+                {podcastsData?.map(
+                  ({ _id, podcastTitle, podcastDescription, imageUrl }) => (
+                    <PodcastCard
+                      key={_id}
+                      imgUrl={imageUrl!}
+                      title={podcastTitle}
+                      description={podcastDescription}
+                      podcastId={_id}
+                    />
+                  )
+                )}
+              </div>
+            ) : (
+              <EmptyState title="No results found" />
+            )}
+          </>
+        ) : (
+          <LoaderSpinner />
+        )}
+      </div>
     </div>
   );
 };
 
-export default DiscoverPage;
+export default Discover;

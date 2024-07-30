@@ -1,5 +1,5 @@
 import { GeneratePodcastProps } from "@/types";
-import React, { useId, useState } from "react";
+import React, { useState } from "react";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
