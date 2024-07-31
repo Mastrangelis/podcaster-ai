@@ -58,6 +58,14 @@ const PodcastDetailPlayer = ({
     }));
   };
 
+  const onFigureClick = () => {
+    if (isOwner) {
+      return router.push("/profile");
+    }
+
+    return router.push(`/profile/${authorId}`);
+  };
+
   if (!imageUrl || !authorImageUrl) return <LoaderSpinner />;
 
   return (
@@ -77,9 +85,7 @@ const PodcastDetailPlayer = ({
             </h1>
             <figure
               className="flex cursor-pointer items-center gap-2"
-              onClick={() => {
-                router.push(`/profile/${authorId}`);
-              }}
+              onClick={onFigureClick}
             >
               <Image
                 src={authorImageUrl}
@@ -110,15 +116,15 @@ const PodcastDetailPlayer = ({
         <div className="relative mt-2">
           <Image
             src="/icons/three-dots.svg"
-            width={20}
-            height={30}
+            width={48}
+            height={48}
             alt="Three dots icon"
             className="cursor-pointer"
             onClick={() => setIsDeleting((prev) => !prev)}
           />
           {isDeleting && (
             <div
-              className="absolute -left-32 -top-2 z-10 flex w-24 justify-center cursor-pointer gap-2 rounded-md bg-black-6 py-1.5 hover:bg-black-2"
+              className="absolute top-12 left-3 z-10 flex w-40 justify-center cursor-pointer gap-2 rounded-md bg-black-6 py-1.5 hover:bg-black-2"
               onClick={handleDelete}
             >
               <Image
@@ -127,7 +133,9 @@ const PodcastDetailPlayer = ({
                 height={16}
                 alt="Delete icon"
               />
-              <h2 className="text-16 font-normal text-white-1">Delete</h2>
+              <h2 className="text-16 font-normal text-white-1">
+                Delete podcast
+              </h2>
             </div>
           )}
         </div>

@@ -1,17 +1,19 @@
 import { ConvexError, v } from "convex/values";
 
-import { internalMutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 
 export const getUserById = query({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
+    if (!args.clerkId) return;
+
     const user = await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("clerkId"), args.clerkId))
       .unique();
 
     if (!user) {
-      throw new ConvexError("User not found");
+      return;
     }
 
     return user;
@@ -82,6 +84,7 @@ export const updateUser = internalMutation({
     clerkId: v.string(),
     imageUrl: v.string(),
     email: v.string(),
+    name: v.string(),
   },
   async handler(ctx, args) {
     const user = await ctx.db
@@ -96,6 +99,7 @@ export const updateUser = internalMutation({
     await ctx.db.patch(user._id, {
       imageUrl: args.imageUrl,
       email: args.email,
+      name: args.name,
     });
 
     const podcast = await ctx.db
@@ -113,7 +117,51 @@ export const updateUser = internalMutation({
   },
 });
 
-export const deleteUser = internalMutation({
+export const deleteUser = mutation({
+  args: { clerkId: v.string() },
+  async handler(ctx, args) {
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("clerkId"), args.clerkId))
+      .unique();
+
+    if (!user) {
+      throw new ConvexError("User not found");
+    }
+
+    const allPodcasts = await ctx.db.query("podcasts").collect();
+    const userPodcasts = allPodcasts.filter((p) => p.authorId === user.clerkId);
+    const followedPodcasts = allPodcasts.filter((p) =>
+      p.viewedBy.includes(user._id)
+    );
+
+    if (userPodcasts.length > 0) {
+      await Promise.all(
+        userPodcasts.map(async (p) => {
+          if (p.audioStorageId) await ctx.storage.delete(p.audioStorageId);
+          if (p.imageStorageId) await ctx.storage.delete(p.imageStorageId);
+
+          await ctx.db.delete(p._id);
+        })
+      );
+    }
+
+    if (followedPodcasts.length > 0) {
+      await Promise.all(
+        followedPodcasts.map(async (p) => {
+          if (p.audioStorageId)
+            await ctx.db.patch(p._id, {
+              viewedBy: p.viewedBy.filter((u) => u !== user._id),
+            });
+        })
+      );
+    }
+
+    await ctx.db.delete(user._id);
+  },
+});
+
+export const deleteUserInternal = internalMutation({
   args: { clerkId: v.string() },
   async handler(ctx, args) {
     const user = await ctx.db
@@ -126,6 +174,22 @@ export const deleteUser = internalMutation({
     }
 
     await ctx.db.delete(user._id);
+
+    const podcasts = await ctx.db
+      .query("podcasts")
+      .filter((q) => q.eq(q.field("authorId"), user.clerkId))
+      .collect();
+
+    if (podcasts.length > 0) {
+      await Promise.all(
+        podcasts.map(async (p) => {
+          if (p.audioStorageId) await ctx.storage.delete(p.audioStorageId);
+          if (p.imageStorageId) await ctx.storage.delete(p.imageStorageId);
+
+          await ctx.db.delete(p._id);
+        })
+      );
+    }
   },
 });
 
@@ -134,7 +198,10 @@ export const getFollowersByPodcastId = query({
     podcastId: v.id("podcasts"),
   },
   handler: async (ctx, args) => {
-    const podcast = await ctx.db.get(args.podcastId);
+    const podcast = await ctx.db
+      .query("podcasts")
+      .filter((q) => q.eq(q.field("_id"), args.podcastId))
+      .unique();
 
     if (!podcast) {
       throw new ConvexError("Podcast not found");

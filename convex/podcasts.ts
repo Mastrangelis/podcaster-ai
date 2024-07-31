@@ -102,7 +102,10 @@ export const getPodcastById = query({
 
 // this query will get the podcasts based on the views of the podcast , which we are showing in the Trending Podcasts section.
 export const getTrendingPodcasts = query({
-  handler: async (ctx) => {
+  args: {
+    clerkId: v.string(),
+  },
+  handler: async (ctx, args) => {
     const podcasts = await ctx.db.query("podcasts").collect();
 
     return podcasts
@@ -141,10 +144,15 @@ export const getPodcastByAuthorId = query({
 export const getPodcastBySearch = query({
   args: {
     search: v.string(),
+    clerkId: v.string(),
   },
   handler: async (ctx, args) => {
     if (args.search === "") {
-      return await ctx.db.query("podcasts").order("desc").collect();
+      return await ctx.db
+        .query("podcasts")
+        .filter((q) => q.neq(q.field("authorId"), args.clerkId))
+        .order("desc")
+        .collect();
     }
 
     const authorSearch = await ctx.db
@@ -158,6 +166,7 @@ export const getPodcastBySearch = query({
 
     const titleSearch = await ctx.db
       .query("podcasts")
+      .filter((q) => q.neq(q.field("authorId"), args.clerkId))
       .withSearchIndex("search_title", (q) =>
         q.search("podcastTitle", args.search)
       )
@@ -169,6 +178,7 @@ export const getPodcastBySearch = query({
 
     return await ctx.db
       .query("podcasts")
+      .filter((q) => q.neq(q.field("authorId"), args.clerkId))
       .withSearchIndex("search_body", (q) =>
         q.search("podcastDescription", args.search)
       )

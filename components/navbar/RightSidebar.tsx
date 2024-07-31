@@ -34,7 +34,7 @@ const RightSidebar = () => {
     >
       <SignedIn>
         <Link
-          href={`/profile/${user?.id}`}
+          href="/profile"
           className="flex flex-col gap-3 group cursor-pointer"
         >
           <div className="flex gap-3">
@@ -75,15 +75,19 @@ const RightSidebar = () => {
             <div
               key={podcaster._id}
               className="flex cursor-pointer justify-between items-center"
-              onClick={() => router.push(`/profile/${podcaster.clerkId}`)}
+              onClick={() => {
+                if (podcaster.clerkId === user?.id) router.push("/profile");
+
+                router.push(`/profile/${podcaster.clerkId}`);
+              }}
             >
               <figure className="flex items-center gap-3">
                 <Image
                   src={podcaster.imageUrl}
                   alt={podcaster.name}
-                  width={36}
-                  height={36}
-                  className="aspect-square rounded-full"
+                  width={32}
+                  height={32}
+                  className="aspect-square rounded-lg"
                 />
                 <h2 className="text-14 font-semibold text-white-1">
                   {podcaster.name}
