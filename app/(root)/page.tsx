@@ -6,7 +6,7 @@ import LoaderSpinner from "@/components/LoaderSpinner";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 
-export const Home = () => {
+const Home = () => {
   const trendingPodcasts = useQuery(api.podcasts.getTrendingPodcasts);
 
   return (
