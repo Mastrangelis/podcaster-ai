@@ -24,7 +24,7 @@ const MobileNav = () => {
             width={30}
             height={30}
             alt="menu"
-            className="cursor-pointer"
+            className="cursor-pointer opacity-50 hover:opacity-100"
           />
         </SheetTrigger>
         <SheetContent side="left" className="border-none bg-black-1">
