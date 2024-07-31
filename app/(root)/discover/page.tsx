@@ -8,10 +8,14 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import React from "react";
 import { SearchParamProps } from "@/types";
+import { useUser } from "@clerk/nextjs";
 
 const Discover = ({ searchParams: { search } }: SearchParamProps) => {
+  const { user: clerkUser } = useUser();
+
   const podcastsData = useQuery(api.podcasts.getPodcastBySearch, {
     search: (search as string) || "",
+    clerkId: clerkUser?.id || "",
   });
 
   return (
@@ -19,7 +23,7 @@ const Discover = ({ searchParams: { search } }: SearchParamProps) => {
       <Searchbar />
       <div className="flex flex-col gap-9">
         <h1 className="text-20 font-bold text-white-1">
-          {!search ? "Discover Trending Podcasts" : "Search results for "}
+          {!search ? "Discover Community Podcasts" : "Search results for "}
           {search && <span className="text-white-2">{search}</span>}
         </h1>
         {podcastsData ? (

@@ -114,6 +114,8 @@ export interface PodcastCardProps {
   imgUrl: string;
   title: string;
   description: string;
+  author?: string;
+  authorImageUrl?: string;
   podcastId: Id<"podcasts">;
 }
 
@@ -125,6 +127,8 @@ export interface ProfileCardProps {
   podcastData: ProfilePodcastProps;
   imageUrl: string;
   userFirstName: string;
+  isOwner?: boolean;
+  clerkId?: string;
 }
 
 export type UseDotButtonType = {

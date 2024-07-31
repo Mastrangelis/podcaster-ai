@@ -14,6 +14,8 @@ const PodcastCard = ({
   title,
   description,
   podcastId,
+  author,
+  authorImageUrl,
 }: PodcastCardProps) => {
   const router = useRouter();
   const { user } = useUser();
@@ -49,6 +51,22 @@ const PodcastCard = ({
             {description}
           </h2>
         </div>
+        {/* <div className="flex items-center gap-2">
+          {authorImageUrl && (
+            <Image
+              src={authorImageUrl}
+              width={24}
+              height={24}
+              alt="author"
+              className="rounded-full"
+            />
+          )}
+          {author && (
+            <h2 className="text-12 truncate font-normal capitalize text-white-3">
+              {author}
+            </h2>
+          )}
+        </div> */}
       </figure>
     </div>
   );

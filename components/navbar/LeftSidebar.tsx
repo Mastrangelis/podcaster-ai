@@ -15,6 +15,7 @@ const LeftSidebar = () => {
   const router = useRouter();
   const { signOut } = useClerk();
   const { audio, setAudio } = useAudio();
+  const { user } = useClerk();
 
   const handleLogout = () => {
     setAudio(undefined);
@@ -39,6 +40,8 @@ const LeftSidebar = () => {
         </Link>
 
         {sidebarLinks.map(({ route, label, imgURL }) => {
+          if (!user && route === "/profile") return null;
+
           const isActive =
             pathname === route || pathname.startsWith(`${route}/`);
 
