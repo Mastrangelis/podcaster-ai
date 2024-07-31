@@ -17,7 +17,17 @@ const ConvexClerkProvider = ({ children }: { children: ReactNode }) => (
         socialButtonsVariant: "iconButton",
         logoImageUrl: "/icons/logo.svg",
       },
+
       elements: {
+        userButtonAvatarBox: {
+          width: 48,
+          height: 48,
+        },
+        userButtonPopoverActionButton: {
+          "&:hover": {
+            color: "rgba(255, 255, 255, 0.83) !important",
+          },
+        },
         socialButtonsIconButton: {
           border: "1px solid rgba(255, 255, 255, 0.2) !important",
         },
@@ -28,8 +38,9 @@ const ConvexClerkProvider = ({ children }: { children: ReactNode }) => (
         },
         input: {
           backgroundColor: "#1b1f29",
-          textColor: "white",
           placeholderColor: "#15171C",
+          borderColor: "rgba(255, 255, 255, 1)",
+          color: "white",
         },
       },
       variables: {

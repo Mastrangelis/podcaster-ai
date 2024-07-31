@@ -12,19 +12,19 @@ import { Progress } from "./ui/progress";
 
 const PodcastPlayer = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const { audio } = useAudio();
+  const { audio, setAudio } = useAudio();
 
   const togglePlayPause = () => {
     if (audioRef.current?.paused) {
       audioRef.current?.play();
-      setIsPlaying(true);
+      setAudio((prev) => ({ ...prev, isPlaying: true }));
     } else {
       audioRef.current?.pause();
-      setIsPlaying(false);
+      setAudio((prev) => ({ ...prev, isPlaying: false }));
     }
   };
 
@@ -73,17 +73,15 @@ const PodcastPlayer = () => {
 
   useEffect(() => {
     const audioElement = audioRef.current;
-    if (audio?.audioUrl) {
-      if (audioElement) {
-        audioElement.play().then(() => {
-          setIsPlaying(true);
-        });
-      }
+
+    if (audio?.audioUrl && audioElement && audio?.isPlaying) {
+      audioElement?.play();
     } else {
+      setAudio((prev) => ({ ...prev, isPlaying: false }));
       audioElement?.pause();
-      setIsPlaying(true);
     }
-  }, [audio]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audio?.isPlaying]);
 
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
@@ -92,21 +90,36 @@ const PodcastPlayer = () => {
   };
 
   const handleAudioEnded = () => {
-    setIsPlaying(false);
+    setAudio((prev) => ({ ...prev, isPlaying: false }));
+  };
+
+  const onProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime =
+        (e.nativeEvent.offsetX / e.currentTarget.offsetWidth) * duration;
+    }
   };
 
   return (
     <div
-      className={cn("sticky bottom-0 left-0 flex size-full flex-col", {
-        hidden: !audio?.audioUrl || audio?.audioUrl === "",
-      })}
+      className={cn(
+        "sticky bottom-0 left-0 flex flex-col transition-all duration-300 ease-in-out",
+        {
+          "max-h-full visible": audio?.audioUrl && audio?.audioUrl !== "",
+          "max-h-0 hidden": !audio?.audioUrl || audio?.audioUrl === "",
+        }
+      )}
     >
-      <Progress
-        value={(currentTime / duration) * 100}
-        className="w-full"
-        max={duration}
-      />
-      <section className="glassmorphism-black flex h-[112px] w-full items-center justify-between px-4 max-md:justify-center max-md:gap-5 md:px-12">
+      {duration > 0 && (
+        <Progress
+          value={(currentTime / duration) * 100}
+          className="w-full cursor-pointer"
+          max={duration}
+          onClick={onProgressBarClick}
+        />
+      )}
+
+      <section className="glassmorphism-black flex h-[112px] w-full items-center justify-between px-4  max-md:gap-5 md:px-12">
         <audio
           ref={audioRef}
           src={audio?.audioUrl}
@@ -114,17 +127,17 @@ const PodcastPlayer = () => {
           onLoadedMetadata={handleLoadedMetadata}
           onEnded={handleAudioEnded}
         />
-        <div className="flex items-center gap-4 max-md:hidden">
+        <div className="flex items-center gap-4">
           <Link href={`/podcast/${audio?.podcastId}`}>
             <Image
               src={audio?.imageUrl! || "/images/player1.png"}
               width={64}
               height={64}
               alt="player1"
-              className="aspect-square rounded-xl"
+              className="aspect-square rounded-xl size-12 lg:size-16"
             />
           </Link>
-          <div className="flex w-[160px] flex-col">
+          <div className="flex w-[160px] flex-col max-lg:hidden">
             <h2 className="text-14 truncate font-semibold text-white-1">
               {audio?.title}
             </h2>
@@ -143,10 +156,10 @@ const PodcastPlayer = () => {
             <h2 className="text-12 font-bold text-white-4">-5</h2>
           </div>
           <Image
-            src={isPlaying ? "/icons/Pause.svg" : "/icons/Play.svg"}
+            src={audio?.isPlaying ? "/icons/Pause.svg" : "/icons/Play.svg"}
             width={30}
             height={30}
-            alt="play"
+            alt={audio?.isPlaying ? "pause" : "play"}
             onClick={togglePlayPause}
           />
           <div className="flex items-center gap-1.5">

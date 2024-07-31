@@ -9,67 +9,90 @@ import Carousel from "../Carousel";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
-import LoaderSpinner from "../LoaderSpinner";
 import { useAudio } from "@/lib/providers/AudioProvider";
 import { cn } from "@/lib/utils";
+import clsx from "clsx";
 
 const RightSidebar = () => {
   const { user } = useUser();
-  const topPodcasters = useQuery(api.users.getTopUserByPodcastCount);
+
   const router = useRouter();
 
   const { audio } = useAudio();
 
+  const topPodcasters = useQuery(api.users.getTopUserByPodcastCount, {
+    clerkId: user?.id ?? "",
+  });
+
   return (
     <section
-      className={cn("right_sidebar h-[calc(100vh-5px)]", {
-        "h-[calc(100vh-140px)]": audio?.audioUrl,
+      className={cn("hidden", {
+        "h-[calc(100vh-112px)]": audio?.audioUrl,
+        "right_sidebar h-[calc(100vh-5px)]":
+          Array.isArray(topPodcasters) && topPodcasters?.length > 0,
       })}
     >
       <SignedIn>
-        <Link href={`/profile/${user?.id}`} className="flex gap-3 pb-12">
-          <UserButton />
-          <div className="flex w-full items-center justify-between">
-            <h1 className="text-16 truncate font-semibold text-white-1">
-              {user?.firstName} {user?.lastName}
-            </h1>
-            <Image
-              src="/icons/right-arrow.svg"
-              alt="arrow"
-              width={24}
-              height={24}
+        <Link
+          href={`/profile/${user?.id}`}
+          className="flex flex-col gap-3 group cursor-pointer"
+        >
+          <div className="flex gap-3">
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: {
+                    width: 48,
+                    height: 48,
+                  },
+                },
+              }}
             />
+            <div className="flex w-full items-center justify-between">
+              <h1 className="text-16 truncate font-semibold text-white-1">
+                {user?.firstName} {user?.lastName}
+              </h1>
+              <Image
+                src="/icons/right-arrow.svg"
+                alt="arrow"
+                width={24}
+                height={24}
+                className="group-hover:animate-bounce"
+              />
+            </div>
           </div>
+          <div className="bg-orange-1 h-[2px] w-0 group-hover:w-full transition-all duration-500"></div>
         </Link>
       </SignedIn>
-      <section>
+      <section className={clsx({ "pt-12": true, "pt-0": !user })}>
         <Header headerTitle="Fans Like You" />
         <Carousel fansLikeDetail={topPodcasters!} />
       </section>
       <section className="flex flex-col gap-8 pt-12">
-        <Header headerTitle="Top Podcastrs" />
+        <Header headerTitle="Top Podcasters" />
         <div className="flex flex-col gap-6">
           {topPodcasters?.slice(0, 3).map((podcaster) => (
             <div
               key={podcaster._id}
-              className="flex cursor-pointer justify-between"
+              className="flex cursor-pointer justify-between items-center"
               onClick={() => router.push(`/profile/${podcaster.clerkId}`)}
             >
-              <figure className="flex items-center gap-2">
+              <figure className="flex items-center gap-3">
                 <Image
                   src={podcaster.imageUrl}
                   alt={podcaster.name}
-                  width={44}
-                  height={44}
-                  className="aspect-square rounded-lg"
+                  width={36}
+                  height={36}
+                  className="aspect-square rounded-full"
                 />
                 <h2 className="text-14 font-semibold text-white-1">
                   {podcaster.name}
                 </h2>
               </figure>
               <div className="flex items-center">
-                <p className="text-12 font-normal text-white-1">
-                  {podcaster.totalPodcasts} podcasts
+                <p className="text-14 font-normal text-white-1">
+                  {podcaster.totalPodcasts} &nbsp; podcast
+                  {podcaster.totalPodcasts > 1 ? "s" : ""}
                 </p>
               </div>
             </div>

@@ -33,6 +33,7 @@ import { Label } from "../ui/label";
 import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import clsx from "clsx";
 
 const formSchema = z.object({
   podcastTitle: z.string().min(2),
@@ -76,16 +77,18 @@ export const CreatePodcastForm = () => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setIsSubmitting(true);
-      debugger;
+
       if (!audioUrl || !imageUrl || !voiceType) {
         toast({
-          title: "Please generate audio and image",
+          title: "Error",
+          description: "Please generate audio and image",
+          variant: "destructive",
         });
         setIsSubmitting(false);
         throw new Error("Please generate audio and image");
       }
 
-      const podcast = await createPodcast({
+      await createPodcast({
         podcastTitle: data.podcastTitle,
         podcastDescription: data.podcastDescription,
         audioUrl,
@@ -93,12 +96,12 @@ export const CreatePodcastForm = () => {
         voiceType,
         imagePrompt,
         voicePrompt,
-        views: 0,
+        viewedBy: [],
         audioDuration,
         audioStorageId: audioStorageId!,
         imageStorageId: imageStorageId!,
       });
-      toast({ title: "Podcast created" });
+      toast({ title: "Podcast created", variant: "success" });
       setIsSubmitting(false);
       router.push("/");
     } catch (error) {
@@ -112,7 +115,7 @@ export const CreatePodcastForm = () => {
   };
 
   return (
-    <section className="mt-10 flex flex-col">
+    <section className="mt-10 flex flex-col pb-5">
       <h1 className="text-20 font-bold text-white-1">Create Podcast</h1>
 
       <Form {...form}>
@@ -127,7 +130,7 @@ export const CreatePodcastForm = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-2.5">
                   <FormLabel className="text-16 font-bold text-white-1">
-                    Title
+                    Title <span className="text-red-400">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -136,14 +139,14 @@ export const CreatePodcastForm = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-white-1" />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
 
             <div className="flex flex-col gap-2.5">
               <Label className="text-16 font-bold text-white-1">
-                Select AI Voice
+                Select AI Voice <span className="text-red-400">*</span>
               </Label>
 
               <Select onValueChange={(value) => setVoiceType(value)}>
@@ -157,8 +160,8 @@ export const CreatePodcastForm = () => {
                     className="placeholder:text-gray-1 "
                   />
                 </SelectTrigger>
-                <SelectContent className="text-16 border-none bg-black-1 font-bold text-white-1 focus:ring-orange-1">
-                  {voiceCategories.map((category) => (
+                <SelectContent className="text-16 border-none bg-black-1 font-bold text-white-1 focus-visible:ring-offset-orange-1">
+                  {voiceCategories.map((category: string) => (
                     <SelectItem
                       key={category}
                       value={category}
@@ -184,7 +187,7 @@ export const CreatePodcastForm = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-2.5">
                   <FormLabel className="text-16 font-bold text-white-1">
-                    Description
+                    Description <span className="text-red-400">*</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
@@ -193,7 +196,7 @@ export const CreatePodcastForm = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-white-1" />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -209,6 +212,8 @@ export const CreatePodcastForm = () => {
               setAudioDuration={setAudioDuration}
             />
 
+            <div className="border-b border-black-5 pb-5" />
+
             <GenerateThumbnail
               setImage={setImageUrl}
               setImageStorageId={setImageStorageId}
@@ -220,7 +225,17 @@ export const CreatePodcastForm = () => {
             <div className="mt-10 w-full">
               <Button
                 type="submit"
-                className="text-16 w-full bg-orange-1 py-4 font-extrabold text-white-1 transition-all duration-500 hover:bg-black-1"
+                disabled={
+                  isSubmitting ||
+                  form.formState.isSubmitting ||
+                  !form.formState.isValid ||
+                  !audioUrl ||
+                  !imageUrl
+                }
+                className={clsx({
+                  "text-16 w-full bg-orange-1 py-4 font-extrabold text-white-1 transition-all duration-500 hover:opacity-80 disabled:cursor-not-allowed":
+                    true,
+                })}
               >
                 {isSubmitting ? (
                   <>
