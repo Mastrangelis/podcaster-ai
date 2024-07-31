@@ -20,18 +20,25 @@ export const getUserById = query({
 
 // this query is used to get the top user by podcast count. first the podcast is sorted by views and then the user is sorted by total podcasts, so the user with the most podcasts will be at the top.
 export const getTopUserByPodcastCount = query({
-  args: {},
+  args: {
+    clerkId: v.string(),
+  },
   handler: async (ctx, args) => {
-    const user = await ctx.db.query("users").collect();
+    const users = await ctx.db.query("users").collect();
 
-    const userData = await Promise.all(
-      user.map(async (u) => {
+    const usersData = await Promise.all(
+      users.map(async (u) => {
         const podcasts = await ctx.db
           .query("podcasts")
           .filter((q) => q.eq(q.field("authorId"), u.clerkId))
           .collect();
 
-        const sortedPodcasts = podcasts.sort((a, b) => b.views - a.views);
+        const sortedPodcasts = podcasts
+          ?.map((podcast) => ({
+            ...podcast,
+            views: podcast.viewedBy.length || 0,
+          }))
+          .sort((a, b) => b.views - a.views);
 
         return {
           ...u,
@@ -44,7 +51,12 @@ export const getTopUserByPodcastCount = query({
       })
     );
 
-    return userData.sort((a, b) => b.totalPodcasts - a.totalPodcasts);
+    return usersData
+      ?.filter(
+        (podcaster) =>
+          podcaster.clerkId !== args.clerkId && podcaster.totalPodcasts > 0
+      )
+      ?.sort((a, b) => b.totalPodcasts - a.totalPodcasts);
   },
 });
 
@@ -114,5 +126,26 @@ export const deleteUser = internalMutation({
     }
 
     await ctx.db.delete(user._id);
+  },
+});
+
+export const getFollowersByPodcastId = query({
+  args: {
+    podcastId: v.id("podcasts"),
+  },
+  handler: async (ctx, args) => {
+    const podcast = await ctx.db.get(args.podcastId);
+
+    if (!podcast) {
+      throw new ConvexError("Podcast not found");
+    }
+
+    const users = await Promise.all(
+      podcast.viewedBy.map(async (user) => {
+        return await ctx.db.get(user);
+      })
+    );
+
+    return users;
   },
 });

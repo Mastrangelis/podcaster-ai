@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import AudioProvider from "@/lib/providers/AudioProvider";
 import ConvexClerkProvider from "@/lib/providers/ConvexClerkProvider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -23,11 +24,11 @@ export default function RootLayout({
   return (
     <ConvexClerkProvider>
       <AudioProvider>
-        <html lang="en">
-          <body className={`md:overflow-hidden ${manrope.className}`}>
-            {children}
-          </body>
-        </html>
+        <TooltipProvider>
+          <html lang="en">
+            <body className={`${manrope.className}`}>{children}</body>
+          </html>
+        </TooltipProvider>
       </AudioProvider>
     </ConvexClerkProvider>
   );

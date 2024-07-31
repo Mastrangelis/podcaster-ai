@@ -14,8 +14,8 @@ export const createPodcast = mutation({
     voicePrompt: v.string(),
     imagePrompt: v.string(),
     voiceType: v.string(),
-    views: v.number(),
     audioDuration: v.number(),
+    viewedBy: v.array(v.id("users")),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -46,7 +46,7 @@ export const createPodcast = mutation({
       voicePrompt: args.voicePrompt,
       imagePrompt: args.imagePrompt,
       voiceType: args.voiceType,
-      views: args.views,
+      viewedBy: args.viewedBy,
       authorImageUrl: user[0].imageUrl,
       audioDuration: args.audioDuration,
     });
@@ -103,9 +103,15 @@ export const getPodcastById = query({
 // this query will get the podcasts based on the views of the podcast , which we are showing in the Trending Podcasts section.
 export const getTrendingPodcasts = query({
   handler: async (ctx) => {
-    const podcast = await ctx.db.query("podcasts").collect();
+    const podcasts = await ctx.db.query("podcasts").collect();
 
-    return podcast.sort((a, b) => b.views - a.views).slice(0, 8);
+    return podcasts
+      ?.map((podcast) => ({
+        ...podcast,
+        views: podcast.viewedBy.length || 0,
+      }))
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 8);
   },
 });
 
@@ -120,10 +126,12 @@ export const getPodcastByAuthorId = query({
       .filter((q) => q.eq(q.field("authorId"), args.authorId))
       .collect();
 
-    const totalListeners = podcasts.reduce(
-      (sum, podcast) => sum + podcast.views,
-      0
-    );
+    const totalListeners = podcasts
+      ?.map((podcast) => ({
+        ...podcast,
+        views: podcast.viewedBy.length || 0,
+      }))
+      .reduce((sum, podcast) => sum + podcast.views, 0);
 
     return { podcasts, listeners: totalListeners };
   },
@@ -172,16 +180,33 @@ export const getPodcastBySearch = query({
 export const updatePodcastViews = mutation({
   args: {
     podcastId: v.id("podcasts"),
+    clerkId: v.string(),
   },
   handler: async (ctx, args) => {
     const podcast = await ctx.db.get(args.podcastId);
+
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("clerkId"), args.clerkId))
+      .unique();
 
     if (!podcast) {
       throw new ConvexError("Podcast not found");
     }
 
+    if (!user) {
+      throw new ConvexError("User not found");
+    }
+
+    if (
+      podcast.viewedBy.includes(user._id) ||
+      podcast.authorId === args.clerkId
+    ) {
+      return podcast;
+    }
+
     return await ctx.db.patch(args.podcastId, {
-      views: podcast.views + 1,
+      viewedBy: [...podcast.viewedBy, user._id],
     });
   },
 });

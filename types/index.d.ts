@@ -45,7 +45,7 @@ export interface PodcastProps {
   imagePrompt?: string;
   voiceType: string;
   audioDuration: number;
-  views: number;
+  viewedBy: Id<"users">[];
 }
 
 export interface ProfilePodcastProps {
@@ -78,7 +78,7 @@ export interface LatestPodcastCardProps {
   index: number;
   audioUrl: string;
   author: string;
-  views: number;
+  viewedBy: Id<"users">[];
   podcastId: Id<"podcasts">;
 }
 
@@ -96,12 +96,13 @@ export interface PodcastDetailPlayerProps {
 }
 
 export interface AudioProps {
-  title: string;
-  audioUrl: string;
-  author: string;
-  imageUrl: string;
-  podcastId: string;
+  title?: string;
+  audioUrl?: string;
+  author?: string;
+  imageUrl?: string;
+  podcastId?: string;
   isPlaying?: boolean;
+  canRestart?: boolean;
 }
 
 export interface AudioContextType {

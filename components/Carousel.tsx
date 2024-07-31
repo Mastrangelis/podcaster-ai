@@ -38,7 +38,7 @@ const EmblaCarousel = ({ fansLikeDetail }: CarouselProps) => {
 
   return (
     <section
-      className="flex w-full flex-col gap-4 overflow-hidden"
+      className="flex w-full flex-col gap-4 overflow-hidden mt-3"
       ref={emblaRef}
     >
       <div className="flex">

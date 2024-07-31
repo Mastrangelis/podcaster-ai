@@ -14,12 +14,17 @@ const LeftSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { signOut } = useClerk();
-  const { audio } = useAudio();
+  const { audio, setAudio } = useAudio();
+
+  const handleLogout = () => {
+    setAudio(undefined);
+    signOut(() => router.push("/"));
+  };
 
   return (
     <section
       className={cn("left_sidebar h-[calc(100vh-5px)]", {
-        "h-[calc(100vh-140px)]": audio?.audioUrl,
+        "h-[calc(100vh-112px)] pb-5": audio?.audioUrl,
       })}
     >
       <nav className="flex flex-col gap-6">
@@ -56,19 +61,36 @@ const LeftSidebar = () => {
         })}
       </nav>
       <SignedOut>
-        <div className="flex-center w-full pb-14 max-lg:px-4 lg:pr-8">
-          <Button asChild className="text-16 w-full bg-orange-1 font-extrabold">
-            <Link href="/sign-in">Sign in</Link>
+        <div className="flex-center w-full pb-5 max-lg:px-4 lg:pr-8">
+          <Button
+            asChild
+            className="text-16 w-full bg-orange-1 font-extrabold transition-all duration-500 hover:opacity-80"
+          >
+            <Link href="/sign-in" className="flex items-center gap-2">
+              <Image
+                src="/icons/account.svg"
+                alt="sign-in"
+                width={24}
+                height={24}
+              />
+              <p className="max-lg:hidden">Sign in</p>
+            </Link>
           </Button>
         </div>
       </SignedOut>
       <SignedIn>
-        <div className="flex-center w-full pb-14 max-lg:px-4 lg:pr-8">
+        <div className="flex-center w-full pb-5 max-lg:px-4 lg:pr-8">
           <Button
-            className="text-16 w-full bg-orange-1 font-extrabold"
-            onClick={() => signOut(() => router.push("/"))}
+            className="text-16 w-full bg-orange-1 font-extrabold flex items-center gap-2 transition-all duration-500 hover:opacity-80"
+            onClick={handleLogout}
           >
-            Log Out
+            <Image
+              src="/icons/logout.svg"
+              alt="logout"
+              width={24}
+              height={24}
+            />
+            <p className="max-lg:hidden">Logout</p>
           </Button>
         </div>
       </SignedIn>

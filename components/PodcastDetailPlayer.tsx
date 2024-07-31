@@ -25,7 +25,7 @@ const PodcastDetailPlayer = ({
   authorId,
 }: PodcastDetailPlayerProps) => {
   const router = useRouter();
-  const { setAudio } = useAudio();
+  const { setAudio, audio } = useAudio();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const deletePodcast = useMutation(api.podcasts.deletePodcast);
@@ -35,6 +35,7 @@ const PodcastDetailPlayer = ({
       await deletePodcast({ podcastId, imageStorageId, audioStorageId });
       toast({
         title: "Podcast deleted",
+        variant: "destructive",
       });
       router.push("/");
     } catch (error) {
@@ -47,13 +48,14 @@ const PodcastDetailPlayer = ({
   };
 
   const handlePlay = () => {
-    setAudio({
+    setAudio((prev) => ({
       title: podcastTitle,
       audioUrl,
       imageUrl,
       author,
       podcastId,
-    });
+      isPlaying: !prev?.isPlaying,
+    }));
   };
 
   if (!imageUrl || !authorImageUrl) return <LoaderSpinner />;
@@ -95,12 +97,12 @@ const PodcastDetailPlayer = ({
             className="text-16 w-full max-w-[250px] bg-orange-1 font-extrabold text-white-1"
           >
             <Image
-              src="/icons/Play.svg"
+              src={audio?.isPlaying ? "/icons/Pause.svg" : "/icons/Play.svg"}
               width={20}
               height={20}
               alt="random play"
-            />{" "}
-            &nbsp; Play podcast
+            />
+            &nbsp; {audio?.isPlaying ? "Pause" : "Play"} podcast
           </Button>
         </div>
       </div>
@@ -116,7 +118,7 @@ const PodcastDetailPlayer = ({
           />
           {isDeleting && (
             <div
-              className="absolute -left-32 -top-2 z-10 flex w-32 cursor-pointer justify-center gap-2 rounded-md bg-black-6 py-1.5 hover:bg-black-2"
+              className="absolute -left-32 -top-2 z-10 flex w-24 justify-center cursor-pointer gap-2 rounded-md bg-black-6 py-1.5 hover:bg-black-2"
               onClick={handleDelete}
             >
               <Image

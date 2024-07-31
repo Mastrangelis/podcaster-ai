@@ -1,5 +1,5 @@
 import { GeneratePodcastProps } from "@/types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
@@ -59,6 +59,7 @@ const useGeneratePodcast = ({
       setIsGenerating(false);
       toast({
         title: "Podcast generated successfully",
+        variant: "success",
       });
     } catch (error) {
       console.log("Error generating podcast", error);
@@ -75,12 +76,25 @@ const useGeneratePodcast = ({
 
 const GeneratePodcast = (props: GeneratePodcastProps) => {
   const { isGenerating, generatePodcast } = useGeneratePodcast(props);
+  const [isPromptValid, setIsPromptValid] = useState(false);
+
+  useEffect(() => {
+    if (
+      props.voicePrompt &&
+      props.voicePrompt.length > 0 &&
+      props.voicePrompt.length < 4096
+    ) {
+      setIsPromptValid(true);
+    } else {
+      setIsPromptValid(false);
+    }
+  }, [props.voicePrompt]);
 
   return (
     <div>
       <div className="flex flex-col gap-2.5">
         <Label className="text-16 font-bold text-white-1">
-          AI Prompt to generate Podcast
+          AI Prompt to generate Podcast <span className="text-red-400">*</span>
         </Label>
         <Textarea
           className="input-class font-light focus-visible:ring-offset-orange-1"
@@ -89,22 +103,34 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           value={props.voicePrompt}
           onChange={(e) => props.setVoicePrompt(e.target.value)}
         />
+        {!isPromptValid && (
+          <p className="text-red-500">
+            The prompt must be less than 4096 characters long.
+          </p>
+        )}
       </div>
-      <div className="mt-5 w-full max-w-[200px]">
-        <Button
-          type="submit"
-          className="text-16 bg-orange-1 py-4 font-bold text-white-1"
-          onClick={generatePodcast}
-        >
-          {isGenerating ? (
-            <>
-              Generating
-              <Loader size={20} className="animate-spin ml-2" />
-            </>
-          ) : (
-            "Generate"
-          )}
-        </Button>
+      <div className="mt-5 w-full flex flex-col gap-5">
+        <div className="w-full max-w-[200px]">
+          <Button
+            type="submit"
+            disabled={isGenerating || !props.voicePrompt || !props.voiceType}
+            className="text-16 bg-orange-1 py-4 font-bold text-white-1 transition-all duration-500 hover:opacity-80"
+            onClick={generatePodcast}
+          >
+            {isGenerating ? (
+              <>
+                Generating
+                <Loader size={20} className="animate-spin ml-2" />
+              </>
+            ) : (
+              "Generate"
+            )}
+          </Button>
+        </div>
+
+        <p className="text-white-1 text-12">
+          ( Tip: You must select a voice type first to generate the podcast )
+        </p>
       </div>
       {props.audio && (
         <audio

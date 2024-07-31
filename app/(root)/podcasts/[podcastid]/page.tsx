@@ -10,6 +10,12 @@ import { useQuery } from "convex/react";
 import Image from "next/image";
 import React from "react";
 import { SearchParamProps } from "@/types";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const PodcastDetailsPage = ({ params: { podcastid } }: SearchParamProps) => {
   const { user } = useUser();
@@ -22,22 +28,67 @@ const PodcastDetailsPage = ({ params: { podcastid } }: SearchParamProps) => {
     podcastId: podcastid,
   });
 
+  const podcastFollowers = useQuery(api.users.getFollowersByPodcastId, {
+    podcastId: podcastid,
+  });
+
+  const podcastViews = podcast?.viewedBy.length || 0;
+
   const isOwner = user?.id === podcast?.authorId;
 
-  if (!similarPodcasts || !podcast) return <LoaderSpinner />;
+  if (!similarPodcasts || !podcast || !podcastFollowers)
+    return <LoaderSpinner />;
 
   return (
-    <section className="flex w-full flex-col">
+    <section className="flex w-full flex-col pb-5">
       <header className="mt-9 flex items-center justify-between">
         <h1 className="text-20 font-bold text-white-1">Currenty Playing</h1>
-        <figure className="flex gap-3">
+        <figure className="flex items-center gap-3">
+          <div className="flex items-center mr-2">
+            {Array.isArray(podcastFollowers) &&
+              podcastFollowers.length > 0 &&
+              podcastFollowers.slice(0, 3).map((follower) => (
+                <Tooltip key={follower?._id} delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <Avatar
+                      className="w-[32px] h-[32px] border-[3px] border-white-2 cursor-pointer bg-orange-1
+                    -mr-2"
+                    >
+                      <AvatarImage src={follower?.imageUrl} />
+                      <AvatarFallback>
+                        {follower?.name?.split(" ")[0][0]}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TooltipTrigger>
+                  <TooltipContent className="border-white-3 bg-black-6">
+                    <p className="text-12 text-white-1">{follower?.name}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            {Array.isArray(podcastFollowers) && podcastFollowers.length > 3 && (
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <Avatar className="w-[32px] h-[32px] border-[3px] border-white-2 cursor-pointer bg-orange-1 text-white-1">
+                    <AvatarFallback>
+                      +{podcastFollowers.length - 3}
+                    </AvatarFallback>
+                  </Avatar>
+                </TooltipTrigger>
+                <TooltipContent className="border-white-3 bg-black-6">
+                  <p className="text-12 text-white-1">
+                    {podcastFollowers.length - 3} more
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
           <Image
             src="/icons/headphone.svg"
             width={24}
             height={24}
             alt="headphone"
           />
-          <h2 className="text-16 font-bold text-white-1">{podcast?.views}</h2>
+          <h2 className="text-16 font-bold text-white-1">{podcastViews}</h2>
         </figure>
       </header>
 
@@ -62,12 +113,14 @@ const PodcastDetailsPage = ({ params: { podcastid } }: SearchParamProps) => {
             {podcast?.voicePrompt}
           </p>
         </div>
-        <div className="flex flex-col gap-4">
-          <h1 className="text-18 font-bold text-white-1">Thumbnail Prompt</h1>
-          <p className="text-16 font-medium text-white-2">
-            {podcast?.imagePrompt}
-          </p>
-        </div>
+        {podcast?.imagePrompt && (
+          <div className="flex flex-col gap-4">
+            <h1 className="text-18 font-bold text-white-1">Thumbnail Prompt</h1>
+            <p className="text-16 font-medium text-white-2">
+              {podcast?.imagePrompt}
+            </p>
+          </div>
+        )}
       </div>
       <section className="mt-8 flex flex-col gap-5">
         <h1 className="text-20 font-bold text-white-1">Similar Podcasts</h1>

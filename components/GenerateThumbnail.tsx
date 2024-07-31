@@ -12,6 +12,7 @@ import { useAction, useMutation } from "convex/react";
 import { useUploadFiles } from "@xixixao/uploadstuff/react";
 import { api } from "@/convex/_generated/api";
 import { v4 as uuidv4 } from "uuid";
+import clsx from "clsx";
 
 const GenerateThumbnail = ({
   setImage,
@@ -30,7 +31,6 @@ const GenerateThumbnail = ({
   const handleGenerateThumbnail = useAction(api.openai.generateThumbnailAction);
 
   const handleImage = async (blob: Blob, fileName: string) => {
-    setIsImageLoading(true);
     setImage("");
 
     try {
@@ -46,6 +46,7 @@ const GenerateThumbnail = ({
       setIsImageLoading(false);
       toast({
         title: "Thumbnail generated successfully",
+        variant: "success",
       });
     } catch (error) {
       console.log(error);
@@ -54,6 +55,8 @@ const GenerateThumbnail = ({
   };
 
   const generateImage = async () => {
+    setIsImageLoading(true);
+
     try {
       const response = await handleGenerateThumbnail({ prompt: imagePrompt });
       const blob = new Blob([response], { type: "image/png" });
@@ -81,7 +84,10 @@ const GenerateThumbnail = ({
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-2.5 mt-10">
+      <Label className="text-16 font-bold text-white-1">
+        Thumbnail <span className="text-red-400">*</span>
+      </Label>
       <div className="generate_thumbnail">
         <Button
           type="button"
@@ -105,11 +111,8 @@ const GenerateThumbnail = ({
         </Button>
       </div>
       {isAiThumbnail ? (
-        <div className="flex flex-col gap-5">
-          <div className="mt-5 flex flex-col gap-2.5">
-            <Label className="text-16 font-bold text-white-1">
-              AI Prompt to generate Thumbnail
-            </Label>
+        <div className="flex flex-col gap-5 mt-2">
+          <div className="mt-1">
             <Textarea
               className="input-class font-light focus-visible:ring-offset-orange-1"
               placeholder="Provide text to generate thumbnail"
@@ -121,7 +124,11 @@ const GenerateThumbnail = ({
           <div className="w-full max-w-[200px]">
             <Button
               type="submit"
-              className="text-16 bg-orange-1 py-4 font-bold text-white-1"
+              disabled={isImageLoading || !imagePrompt}
+              className={clsx({
+                "text-16 bg-orange-1 py-4 font-bold text-white-1 transition-all duration-500 hover:opacity-80":
+                  true,
+              })}
               onClick={generateImage}
             >
               {isImageLoading ? (
@@ -175,7 +182,7 @@ const GenerateThumbnail = ({
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
 
