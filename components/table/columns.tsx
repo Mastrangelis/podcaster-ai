@@ -11,27 +11,6 @@ import clsx from "clsx";
 
 export const columns: ColumnDef<PodcastProps>[] = [
   {
-    header: "#",
-    cell: ({ row }) => {
-      const { audio } = useAudio();
-      const podcast = row.original;
-
-      const isActive = audio?.audioUrl === podcast.audioUrl;
-
-      return (
-        <p
-          className={clsx({
-            "text-16": true,
-            "text-white-1": !isActive,
-            "text-orange-1": isActive,
-          })}
-        >
-          {row.index + 1}
-        </p>
-      );
-    },
-  },
-  {
     accessorKey: "podcast",
     header: "Podcast",
     cell: ({ row }) => {
@@ -47,11 +26,11 @@ export const columns: ColumnDef<PodcastProps>[] = [
             width={50}
             height={50}
             alt="podcast"
-            className="size-14 aspect-square rounded-lg"
+            className="size-11 md:size-14 aspect-square rounded-lg"
           />
           <p
             className={clsx({
-              "max-sm:hidden text-16 line-clamp-1 break-words font-extrabold":
+              "max-sm:hidden text-14 md:text-16 line-clamp-1 break-words font-extrabold":
                 true,
               "text-orange-1": isActive,
               "text-white-1": !isActive,
@@ -63,25 +42,6 @@ export const columns: ColumnDef<PodcastProps>[] = [
       );
     },
   },
-  //   {
-  //     accessorKey: "author",
-  //     header: "Author",
-  //     cell: ({ row }) => {
-  //       const podcast = row.original;
-  //       return (
-  //         <div className="flex items-center gap-3 max-w-80">
-  //           <Image
-  //             src={podcast.authorImageUrl ?? ""}
-  //             width={50}
-  //             height={50}
-  //             alt="podcaster icon"
-  //             className="size-14 aspect-square rounded-lg"
-  //           />
-  //           <p className="text-14 line-clamp-1 break-words">{podcast.author}</p>
-  //         </div>
-  //       );
-  //     },
-  //   },
   {
     accessorKey: "listeners",
     header: "Listeners",
@@ -95,9 +55,9 @@ export const columns: ColumnDef<PodcastProps>[] = [
             width={28}
             height={28}
             alt="headphones"
-            className="size-7"
+            className="size-[18px] md:size-7"
           />
-          <p className="text-16 pt-1 text-white-1">
+          <p className="text-11 md:text-16 pt-1 text-white-1">
             {podcast.viewedBy.length ?? 0}
           </p>
         </div>
@@ -117,9 +77,9 @@ export const columns: ColumnDef<PodcastProps>[] = [
             width={28}
             height={28}
             alt="clock"
-            className="size-7"
+            className="size-4 md:size-7"
           />
-          <p className="text-16 pt-1 text-white-1">
+          <p className="text-12 md:text-16 pt-1 text-white-1">
             {formatTime(podcast.audioDuration)}
           </p>
         </div>
@@ -129,7 +89,7 @@ export const columns: ColumnDef<PodcastProps>[] = [
 
   {
     id: "actions",
-    header: () => <div className="pl-4">Actions</div>,
+    header: () => <div className="p-0 md:pl-4">Actions</div>,
     cell: ({ row }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { audio, setAudio } = useAudio();
@@ -167,7 +127,7 @@ export const columns: ColumnDef<PodcastProps>[] = [
             width={20}
             height={20}
             alt={audio?.isPlaying ? "pause" : "play"}
-            className="cursor-pointer size-7"
+            className="cursor-pointer size-4 md:size-7"
             onClick={handlePlay}
           />
         </div>

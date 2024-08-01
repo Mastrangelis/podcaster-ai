@@ -41,8 +41,8 @@ export function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id} className="shad-table-row-header">
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
+                  <TableHead key={header.id} className="md:text-14 text-12">
+                    {header.column.columnDef.cell?.length === 0
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
