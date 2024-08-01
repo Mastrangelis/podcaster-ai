@@ -50,6 +50,7 @@ const GenerateThumbnail = ({
       });
     } catch (error) {
       console.log(error);
+      setIsImageLoading(false);
       toast({ title: "Error generating thumbnail", variant: "destructive" });
     }
   };
@@ -63,6 +64,7 @@ const GenerateThumbnail = ({
       handleImage(blob, `thumbnail-${uuidv4()}`);
     } catch (error) {
       console.log(error);
+      setIsImageLoading(false);
       toast({ title: "Error generating thumbnail", variant: "destructive" });
     }
   };

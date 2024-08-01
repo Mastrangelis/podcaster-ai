@@ -11,6 +11,17 @@ import { PodcastDetailPlayerProps } from "@/types";
 import LoaderSpinner from "./LoaderSpinner";
 import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 const PodcastDetailPlayer = ({
   audioUrl,
@@ -70,17 +81,17 @@ const PodcastDetailPlayer = ({
 
   return (
     <div className="mt-6 flex w-full justify-between max-md:justify-center">
-      <div className="flex flex-col gap-8 max-md:items-center md:flex-row">
+      <div className="flex gap-8 max-md:items-center md:flex-row">
         <Image
           src={imageUrl}
           width={250}
           height={250}
           alt="Podcast image"
-          className="aspect-square rounded-lg"
+          className="aspect-square rounded-lg size-36 md:size-64"
         />
-        <div className="flex w-full flex-col gap-5 max-md:items-center md:gap-9">
-          <article className="flex flex-col gap-2 max-md:items-center">
-            <h1 className="text-32 font-extrabold tracking-[-0.32px] text-white-1">
+        <div className="flex w-full flex-col gap-5 md:gap-9">
+          <article className="flex flex-col gap-2">
+            <h1 className="text-16 md:text-32 line-clamp-2 font-extrabold tracking-[-0.32px] text-white-1">
               {podcastTitle}
             </h1>
             <figure
@@ -100,15 +111,18 @@ const PodcastDetailPlayer = ({
 
           <Button
             onClick={handlePlay}
-            className="text-16 w-full max-w-[250px] bg-orange-1 font-extrabold text-white-1"
+            className="w-full max-w-[250px] bg-orange-1 font-extrabold text-white-1"
           >
             <Image
               src={audio?.isPlaying ? "/icons/Pause.svg" : "/icons/Play.svg"}
               width={20}
               height={20}
               alt="random play"
+              className="size-4 md:size-5"
             />
-            &nbsp; {audio?.isPlaying ? "Pause" : "Play"} podcast
+            <span className="text-12 md:text-16">
+              &nbsp; {audio?.isPlaying ? "Pause" : "Play"} podcast
+            </span>
           </Button>
         </div>
       </div>
@@ -116,27 +130,63 @@ const PodcastDetailPlayer = ({
         <div className="relative mt-2">
           <Image
             src="/icons/three-dots.svg"
-            width={48}
-            height={48}
+            width={36}
+            height={36}
             alt="Three dots icon"
             className="cursor-pointer"
             onClick={() => setIsDeleting((prev) => !prev)}
           />
           {isDeleting && (
-            <div
-              className="absolute top-12 left-3 z-10 flex w-40 justify-center cursor-pointer gap-2 rounded-md bg-black-6 py-1.5 hover:bg-black-2"
-              onClick={handleDelete}
+            <AlertDialog
+              onOpenChange={(open) => {
+                if (!open && isDeleting) {
+                  setIsDeleting(false);
+                }
+              }}
             >
-              <Image
-                src="/icons/delete.svg"
-                width={16}
-                height={16}
-                alt="Delete icon"
-              />
-              <h2 className="text-16 font-normal text-white-1">
-                Delete podcast
-              </h2>
-            </div>
+              <AlertDialogTrigger asChild>
+                <div className="absolute top-8 right-3 md:top-10 z-10 flex w-32 md:w-40 justify-center cursor-pointer gap-2 rounded-md bg-black-6 py-2 hover:bg-red-400 border border-orange-1 transition-all duration-300 items-center">
+                  <Image
+                    src="/icons/delete.svg"
+                    width={16}
+                    height={16}
+                    alt="Delete icon"
+                  />
+
+                  <h2 className="text-12 md:text-16 font-normal text-white-1">
+                    Delete Podcast
+                  </h2>
+                </div>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="rounded-lg border-white-2/30">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your podcast and all related metadata to it from our
+                    servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel asChild>
+                    <Button
+                      variant="outline"
+                      className="text-16 border-orange-1 font-extrabold text-white-1 ring-0 hover:border-orange-1/80 hover:text-white-2 hover:bg-black-3"
+                    >
+                      Cancel
+                    </Button>
+                  </AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button
+                      onClick={handleDelete}
+                      className="text-16 bg-orange-1 font-extrabold text-white-1 hover:bg-orange-1/80"
+                    >
+                      Yes, Delete
+                    </Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
         </div>
       )}
