@@ -13,29 +13,6 @@ import { useAudio } from "@/lib/providers/AudioProvider";
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 
-function dataURItoBlob(dataURI: string) {
-  const byteString = atob(decodeURIComponent(dataURI.split(",")[1]));
-  const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-  const ab = new ArrayBuffer(byteString.length);
-  const ia = new Uint8Array(ab);
-  for (let i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i);
-  }
-  return new Blob([ab], { type: mimeString });
-}
-
-function dataURLtoFile(dataurl: string, filename: string) {
-  var arr = dataurl.split(","),
-    mime = arr[0]?.match(/:(.*?);/)?.[1],
-    bstr = atob(decodeURIComponent(arr[arr.length - 1])),
-    n = bstr.length,
-    u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new File([u8arr], filename, { type: mime });
-}
-
 const RightSidebar = () => {
   const router = useRouter();
 
