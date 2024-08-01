@@ -103,7 +103,7 @@ const PodcastPlayer = () => {
   return (
     <div
       className={cn(
-        "sticky bottom-0 left-0 flex flex-col transition-all duration-300 ease-in-out",
+        "sticky bottom-0 left-0 flex flex-col transition-all duration-300 ease-in-out z-50",
         {
           "max-h-full visible": audio?.audioUrl && audio?.audioUrl !== "",
           "max-h-0 hidden": !audio?.audioUrl || audio?.audioUrl === "",

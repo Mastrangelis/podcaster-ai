@@ -24,6 +24,8 @@ const RightSidebar = () => {
     clerkId: user?.id ?? "",
   });
 
+  console.log(user);
+
   return (
     <section
       className={cn("hidden", {
@@ -64,14 +66,14 @@ const RightSidebar = () => {
           <div className="bg-orange-1 h-[2px] w-0 group-hover:w-full transition-all duration-500"></div>
         </Link>
       </SignedIn>
-      <section className={clsx({ "pt-12": true, "pt-0": !user })}>
+      <section className={clsx({ "pt-12": user, "pt-0": !user })}>
         <Header headerTitle="Fans Like You" />
         <Carousel fansLikeDetail={topPodcasters!} />
       </section>
       <section className="flex flex-col gap-8 pt-12">
         <Header headerTitle="Top Podcasters" />
         <div className="flex flex-col gap-6">
-          {topPodcasters?.slice(0, 3).map((podcaster) => (
+          {topPodcasters?.slice(0, 7).map((podcaster) => (
             <div
               key={podcaster._id}
               className="flex cursor-pointer justify-between items-center"

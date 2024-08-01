@@ -4,11 +4,9 @@ import PodcastCard from "@/components/cards/PodcastCard";
 import ProfileCard from "@/components/cards/ProfileCard";
 import EmptyState from "@/components/EmptyState";
 import LoaderSpinner from "@/components/LoaderSpinner";
-import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import Image from "next/image";
 import React from "react";
 
 const MyProfilePage = () => {
@@ -64,15 +62,6 @@ const MyProfilePage = () => {
           />
         )}
       </section>
-      {/* <section className="mt-9 flex flex-col items-center gap-5">
-        <Button
-          variant="outline"
-          className="cursor-pointer text-white-2 border-red-400 flex items-center gap-2 max-w-[200px] hover:bg-black-1 hover:text-white-1 hover:border-red-600"
-        >
-          <Image src="/icons/delete.svg" width={16} height={16} alt="Delete" />
-          Delete Account
-        </Button>
-      </section> */}
     </section>
   );
 };
