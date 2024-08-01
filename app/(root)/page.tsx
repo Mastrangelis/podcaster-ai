@@ -16,7 +16,7 @@ const Home = () => {
   if (!trendingPodcasts || !latestPodcasts) return <LoaderSpinner />;
 
   return (
-    <div className="my-9 flex flex-col gap-9 md:overflow-hidden">
+    <div className="my-9 flex flex-col gap-9">
       <section className="flex flex-col gap-5">
         {Array.isArray(trendingPodcasts) && trendingPodcasts.length > 0 && (
           <>
@@ -40,7 +40,7 @@ const Home = () => {
         )}
 
         {Array.isArray(latestPodcasts) && latestPodcasts.length > 0 && (
-          <div className="flex flex-col gap-5 mt-12 w-full max-md:overflow-x-hidden">
+          <div className="flex flex-col gap-5 mt-12 w-full">
             <div className="flex flex-row justify-between items-center">
               <h1 className="text-20 font-bold text-white-1">
                 Latest Podcasts

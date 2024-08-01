@@ -11,7 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="relative flex flex-col">
+    <div className="relative flex flex-col max-md:overflow-hidden">
       <main className="relative flex bg-black-3">
         <LeftSidebar />
 

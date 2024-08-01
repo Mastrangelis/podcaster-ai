@@ -126,7 +126,7 @@ export interface CarouselProps {
 export interface ProfileCardProps {
   podcastData: ProfilePodcastProps;
   imageUrl: string;
-  userFirstName: string;
+  userName: string;
   isOwner?: boolean;
   clerkId?: string;
 }

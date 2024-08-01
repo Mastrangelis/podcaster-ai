@@ -3,7 +3,7 @@
 import { SignedIn, UserButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../Header";
 import Carousel from "../Carousel";
 import { useQuery } from "convex/react";
@@ -13,10 +13,33 @@ import { useAudio } from "@/lib/providers/AudioProvider";
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 
-const RightSidebar = () => {
-  const { user } = useUser();
+function dataURItoBlob(dataURI: string) {
+  const byteString = atob(decodeURIComponent(dataURI.split(",")[1]));
+  const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([ab], { type: mimeString });
+}
 
+function dataURLtoFile(dataurl: string, filename: string) {
+  var arr = dataurl.split(","),
+    mime = arr[0]?.match(/:(.*?);/)?.[1],
+    bstr = atob(decodeURIComponent(arr[arr.length - 1])),
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+}
+
+const RightSidebar = () => {
   const router = useRouter();
+
+  const { user } = useUser();
 
   const { audio } = useAudio();
 
@@ -24,7 +47,37 @@ const RightSidebar = () => {
     clerkId: user?.id ?? "",
   });
 
-  console.log(user);
+  const dbUser = useQuery(api.users.getUserById, {
+    clerkId: user?.id ?? "",
+  });
+
+  useEffect(() => {
+    if (!dbUser || !user) return;
+
+    let dataToUpdate = {};
+
+    if (
+      dbUser?.firstName &&
+      dbUser?.firstName !== null &&
+      dbUser?.firstName !== user.firstName
+    ) {
+      dataToUpdate = { ...dataToUpdate, firstName: dbUser.firstName };
+    }
+
+    if (
+      dbUser?.lastName &&
+      dbUser?.lastName !== null &&
+      dbUser?.lastName !== user.lastName
+    ) {
+      dataToUpdate = { ...dataToUpdate, lastName: dbUser.lastName };
+    }
+
+    if (Object.keys(dataToUpdate).length > 0) {
+      user.update(dataToUpdate);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dbUser?.firstName, dbUser?.lastName, dbUser?.imageUrl]);
 
   return (
     <section
@@ -52,7 +105,7 @@ const RightSidebar = () => {
             />
             <div className="flex w-full items-center justify-between">
               <h1 className="text-16 truncate font-semibold text-white-1">
-                {user?.firstName} {user?.lastName}
+                {dbUser?.firstName} {dbUser?.lastName}
               </h1>
               <Image
                 src="/icons/right-arrow.svg"
@@ -70,10 +123,10 @@ const RightSidebar = () => {
         <Header headerTitle="Fans Like You" />
         <Carousel fansLikeDetail={topPodcasters!} />
       </section>
-      <section className="flex flex-col gap-8 pt-12">
+      <section className="flex flex-col gap-8 pt-12 ">
         <Header headerTitle="Top Podcasters" />
-        <div className="flex flex-col gap-6">
-          {topPodcasters?.slice(0, 7).map((podcaster) => (
+        <div className="flex flex-col gap-6 h-screen overflow-y-auto pr-3.5">
+          {topPodcasters?.slice(0, 8).map((podcaster) => (
             <div
               key={podcaster._id}
               className="flex cursor-pointer justify-between items-center"

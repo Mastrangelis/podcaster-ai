@@ -41,7 +41,7 @@ export const createPodcast = mutation({
       audioUrl: args.audioUrl,
       imageUrl: args.imageUrl,
       imageStorageId: args.imageStorageId,
-      author: user[0].name,
+      author: user[0].firstName + " " + user[0].lastName,
       authorId: user[0].clerkId,
       voicePrompt: args.voicePrompt,
       imagePrompt: args.imagePrompt,

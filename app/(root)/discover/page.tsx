@@ -19,7 +19,7 @@ const Discover = ({ searchParams: { search } }: SearchParamProps) => {
   });
 
   return (
-    <div className="flex flex-col gap-9">
+    <div className="mb-5 flex flex-col gap-9">
       <Searchbar />
       <div className="flex flex-col gap-9">
         <h1 className="text-20 font-bold text-white-1">
