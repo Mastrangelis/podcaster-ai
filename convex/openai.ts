@@ -26,25 +26,27 @@ export const generateAudioAction = action({
 export const generateThumbnailAction = action({
   args: { prompt: v.string() },
   handler: async (_, { prompt }) => {
-    console.log({
-      prompt,
-    });
-    const response = await openai.images.generate({
-      model: "dall-e-3",
-      prompt,
-      size: "1024x1024",
-      quality: "standard",
-      n: 1,
-    });
+    try {
+      const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt,
+        size: "1024x1024",
+        quality: "standard",
+        n: 1,
+      });
 
-    const url = response.data[0].url;
+      const url = response.data[0].url;
 
-    if (!url) {
+      if (!url) {
+        throw new Error("Error generating thumbnail");
+      }
+
+      const imageResponse = await fetch(url);
+      const buffer = await imageResponse.arrayBuffer();
+      return buffer;
+    } catch (e) {
+      console.error(e);
       throw new Error("Error generating thumbnail");
     }
-
-    const imageResponse = await fetch(url);
-    const buffer = await imageResponse.arrayBuffer();
-    return buffer;
   },
 });

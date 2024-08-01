@@ -102,7 +102,7 @@ const PodcastDetailsPage = ({ params: { podcastid } }: SearchParamProps) => {
         {...podcast}
       />
 
-      <p className="text-white-2 text-16 pb-8 pt-[45px] font-medium max-md:text-center">
+      <p className="text-white-2 text-16 pb-8 pt-[45px] font-medium">
         {podcast?.podcastDescription}
       </p>
 

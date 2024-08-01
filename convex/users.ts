@@ -198,13 +198,15 @@ export const getFollowersByPodcastId = query({
     podcastId: v.id("podcasts"),
   },
   handler: async (ctx, args) => {
+    if (!args.podcastId) return;
+
     const podcast = await ctx.db
       .query("podcasts")
       .filter((q) => q.eq(q.field("_id"), args.podcastId))
       .unique();
 
     if (!podcast) {
-      throw new ConvexError("Podcast not found");
+      return;
     }
 
     const users = await Promise.all(

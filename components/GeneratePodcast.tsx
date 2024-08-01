@@ -76,14 +76,17 @@ const useGeneratePodcast = ({
 
 const GeneratePodcast = (props: GeneratePodcastProps) => {
   const { isGenerating, generatePodcast } = useGeneratePodcast(props);
-  const [isPromptValid, setIsPromptValid] = useState(false);
+  const [isPromptValid, setIsPromptValid] = useState(
+    props.voicePrompt.length === 0
+  );
 
   useEffect(() => {
-    if (
-      props.voicePrompt &&
-      props.voicePrompt.length > 0 &&
-      props.voicePrompt.length < 4096
-    ) {
+    if (props.voicePrompt.length === 0) {
+      setIsPromptValid(true);
+      return;
+    }
+
+    if (props.voicePrompt.length > 100 && props.voicePrompt.length < 4096) {
       setIsPromptValid(true);
     } else {
       setIsPromptValid(false);
@@ -105,7 +108,8 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
         />
         {!isPromptValid && (
           <p className="text-red-500">
-            The prompt must be less than 4096 characters long.
+            The prompt must be greater than 100 and less than 4096 characters
+            long.
           </p>
         )}
       </div>
@@ -128,9 +132,11 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           </Button>
         </div>
 
-        <p className="text-white-1 text-12">
-          ( Tip: You must select a voice type first to generate the podcast )
-        </p>
+        {!props.voiceType && (
+          <p className="text-white-2 text-12">
+            ( Tip: You must select a voice type first to generate the podcast )
+          </p>
+        )}
       </div>
       {props.audio && (
         <audio
