@@ -27,7 +27,7 @@ import { useClerk } from "@clerk/nextjs";
 const ProfileCard = ({
   podcastData,
   imageUrl,
-  userFirstName,
+  userName,
   isOwner,
   clerkId,
 }: ProfileCardProps) => {
@@ -103,7 +103,7 @@ const ProfileCard = ({
         <div className="flex flex-col justify-center">
           <div className="flex flex-col gap-1">
             <h1 className="text-24 md:text-32 font-extrabold tracking-[-0.32px] text-white-1 line-clamp-1 break-all">
-              {userFirstName}
+              {userName}
             </h1>
             <figure className="flex gap-2">
               <Image

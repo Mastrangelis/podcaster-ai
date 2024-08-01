@@ -29,7 +29,7 @@ const ProfilePage = ({ params }: SearchParamProps) => {
         <ProfileCard
           podcastData={podcastsData!}
           imageUrl={user?.imageUrl!}
-          userFirstName={user?.name!}
+          userName={user?.name!}
         />
       </div>
       <section className="mt-9 flex flex-col gap-5">

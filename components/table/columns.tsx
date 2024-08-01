@@ -8,6 +8,7 @@ import { PodcastProps } from "@/types";
 import { formatTime } from "@/lib/utils";
 import { useAudio } from "@/lib/providers/AudioProvider";
 import clsx from "clsx";
+import Link from "next/link";
 
 export const columns: ColumnDef<PodcastProps>[] = [
   {
@@ -20,7 +21,10 @@ export const columns: ColumnDef<PodcastProps>[] = [
       const isActive = audio?.audioUrl === podcast.audioUrl;
 
       return (
-        <div className="flex items-center gap-3">
+        <Link
+          href={`/podcasts/${podcast._id}`}
+          className="flex items-center gap-3"
+        >
           <Image
             src={podcast.imageUrl ?? ""}
             width={50}
@@ -28,6 +32,7 @@ export const columns: ColumnDef<PodcastProps>[] = [
             alt="podcast"
             className="size-11 md:size-14 aspect-square rounded-lg"
           />
+
           <p
             className={clsx({
               "max-sm:hidden text-14 md:text-16 line-clamp-1 break-words font-extrabold":
@@ -38,7 +43,7 @@ export const columns: ColumnDef<PodcastProps>[] = [
           >
             {podcast.podcastTitle}
           </p>
-        </div>
+        </Link>
       );
     },
   },

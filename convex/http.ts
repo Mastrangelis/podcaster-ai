@@ -9,34 +9,54 @@ import { Webhook } from "svix";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
 
+function generateGuestName(): string {
+  const prefix = "Guest";
+  const randomNumber = Math.floor(10000 + Math.random() * 90000); // Generates a 5-digit number
+
+  return `${prefix}${randomNumber}`;
+}
+
+function isLessThanFiveMinutesAgo(timestamp: number): boolean {
+  const currentTime = Date.now(); // Current time in milliseconds since epoch
+  const fiveMinutesInMilliseconds = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+  return currentTime - timestamp < fiveMinutesInMilliseconds;
+}
+
 const handleClerkWebhook = httpAction(async (ctx, request) => {
   const event = await validateRequest(request);
+
   if (!event) {
     return new Response("Invalid request", { status: 400 });
   }
-  switch (event.type) {
-    case "user.created":
-      await ctx.runMutation(internal.users.createUser, {
-        clerkId: event.data.id,
-        email: event.data.email_addresses[0].email_address,
-        imageUrl: event.data.image_url,
-        name: event.data.first_name! || "",
-      });
-      break;
-    case "user.updated":
-      await ctx.runMutation(internal.users.updateUser, {
-        clerkId: event.data.id,
-        imageUrl: event.data.image_url,
-        email: event.data.email_addresses[0].email_address,
-        name: event.data.first_name! || "",
-      });
-      break;
-    case "user.deleted":
-      await ctx.runMutation(internal.users.deleteUserInternal, {
-        clerkId: event.data.id as string,
-      });
-      break;
+
+  if (event.type === "user.created") {
+    await ctx.runMutation(internal.users.createUser, {
+      clerkId: event.data.id,
+      email: event.data.email_addresses[0].email_address,
+      imageUrl: event.data.image_url,
+      name:
+        event.data.first_name || event.data.last_name
+          ? `${event.data.first_name} ${event.data.last_name}`
+          : generateGuestName(),
+    });
   }
+
+  if (event.type === "user.updated") {
+    await ctx.runMutation(internal.users.updateUser, {
+      clerkId: event.data.id,
+      imageUrl: event.data.image_url,
+      email: event.data.email_addresses[0].email_address,
+      name: `${event.data.first_name ?? ""} ${event.data.last_name ?? ""}`,
+    });
+  }
+
+  if (event.type === "user.deleted") {
+    await ctx.runMutation(internal.users.deleteUserInternal, {
+      clerkId: event.data.id as string,
+    });
+  }
+
   return new Response(null, {
     status: 200,
   });

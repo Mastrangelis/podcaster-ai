@@ -70,11 +70,24 @@ export const createUser = internalMutation({
     name: v.string(),
   },
   handler: async (ctx, args) => {
+    let firstName, lastName;
+
+    const name = args.name.split(" ");
+    if (name.length === 1) {
+      firstName = name[0];
+      lastName = "";
+    } else {
+      firstName = name[0];
+      lastName = name.slice(1).join(" ");
+    }
+
     await ctx.db.insert("users", {
       clerkId: args.clerkId,
       email: args.email,
       imageUrl: args.imageUrl,
       name: args.name,
+      firstName,
+      lastName,
     });
   },
 });
@@ -87,6 +100,17 @@ export const updateUser = internalMutation({
     name: v.string(),
   },
   async handler(ctx, args) {
+    let firstName, lastName;
+
+    const name = args.name.split(" ");
+    if (name.length === 1) {
+      firstName = name[0];
+      lastName = "";
+    } else {
+      firstName = name[0];
+      lastName = name.slice(1).join(" ");
+    }
+
     const user = await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("clerkId"), args.clerkId))
@@ -100,6 +124,8 @@ export const updateUser = internalMutation({
       imageUrl: args.imageUrl,
       email: args.email,
       name: args.name,
+      firstName,
+      lastName,
     });
 
     const podcast = await ctx.db

@@ -31,7 +31,7 @@ const MyProfilePage = () => {
         <ProfileCard
           podcastData={podcastsData!}
           imageUrl={user?.imageUrl!}
-          userFirstName={user?.name!}
+          userName={user?.name!}
           isOwner
           clerkId={clerkUser?.id!}
         />
