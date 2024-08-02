@@ -38,7 +38,7 @@ const PodcastDetailPlayer = ({
   const router = useRouter();
   const { setAudio, audio } = useAudio();
   const { toast } = useToast();
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const deletePodcast = useMutation(api.podcasts.deletePodcast);
 
   const handleDelete = async () => {
@@ -55,7 +55,14 @@ const PodcastDetailPlayer = ({
         title: "Error deleting podcast",
         variant: "destructive",
       });
+    } finally {
+      setIsOptionsOpen(false);
     }
+  };
+
+  const handleEdit = () => {
+    setIsOptionsOpen(false);
+    router.push(`/podcasts/edit/${podcastId}`);
   };
 
   const handlePlay = () => {
@@ -134,59 +141,73 @@ const PodcastDetailPlayer = ({
             height={36}
             alt="Three dots icon"
             className="cursor-pointer"
-            onClick={() => setIsDeleting((prev) => !prev)}
+            onClick={() => setIsOptionsOpen((prev) => !prev)}
           />
-          {isDeleting && (
-            <AlertDialog
-              onOpenChange={(open) => {
-                if (!open && isDeleting) {
-                  setIsDeleting(false);
-                }
-              }}
-            >
-              <AlertDialogTrigger asChild>
-                <div className="absolute top-8 right-3 md:top-10 z-10 flex w-32 md:w-40 justify-center cursor-pointer gap-2 rounded-md bg-black-6 py-2 hover:bg-red-400 border border-orange-1 transition-all duration-300 items-center">
-                  <Image
-                    src="/icons/delete.svg"
-                    width={16}
-                    height={16}
-                    alt="Delete icon"
-                  />
+          {isOptionsOpen && (
+            <div className="[&>*]:pl-2 absolute top-8 right-3 md:top-10 z-10 flex flex-col w-32 md:w-40 gap-2 rounded-md bg-black-6 py-2 border border-orange-1">
+              <div
+                className="flex items-center gap-2 cursor-pointer hover:bg-black-1/90"
+                onClick={handleEdit}
+              >
+                <Image
+                  src="/icons/edit.svg"
+                  width={16}
+                  height={16}
+                  alt="Edit icon"
+                />
+                <h2 className="text-12 md:text-16 font-normal text-white-1">
+                  Edit podcast{" "}
+                </h2>
+              </div>
+              <div className="ml-2 border-b border-white-2/50 w-[90%] flex" />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <div className="flex gap-2 items-center cursor-pointer hover:bg-black-1/90">
+                    <Image
+                      src="/icons/delete.svg"
+                      width={16}
+                      height={16}
+                      alt="Delete icon"
+                    />
 
-                  <h2 className="text-12 md:text-16 font-normal text-white-1">
-                    Delete Podcast
-                  </h2>
-                </div>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-lg border-white-2/30">
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    your podcast and all related metadata to it from our
-                    servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel asChild>
-                    <Button
-                      variant="outline"
-                      className="text-16 border-orange-1 font-extrabold text-white-1 ring-0 hover:border-orange-1/80 hover:text-white-2 hover:bg-black-3"
-                    >
-                      Cancel
-                    </Button>
-                  </AlertDialogCancel>
-                  <AlertDialogAction asChild>
-                    <Button
-                      onClick={handleDelete}
-                      className="text-16 bg-orange-1 font-extrabold text-white-1 hover:bg-orange-1/80"
-                    >
-                      Yes, Delete
-                    </Button>
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    <h2 className="text-12 md:text-16 font-normal text-white-1">
+                      Delete Podcast
+                    </h2>
+                  </div>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="rounded-lg border-white-2/30">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      your podcast and all related metadata to it from our
+                      servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel asChild>
+                      <Button
+                        variant="outline"
+                        className="text-16 border-orange-1 font-extrabold text-white-1 ring-0 hover:border-orange-1/80 hover:text-white-2 hover:bg-black-3"
+                        onClick={() => setIsOptionsOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </AlertDialogCancel>
+                    <AlertDialogAction asChild>
+                      <Button
+                        onClick={handleDelete}
+                        className="text-16 bg-orange-1 font-extrabold text-white-1 hover:bg-orange-1/80"
+                      >
+                        Yes, Delete
+                      </Button>
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           )}
         </div>
       )}

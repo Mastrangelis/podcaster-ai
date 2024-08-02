@@ -191,6 +191,51 @@ export const getPodcastBySearch = query({
   },
 });
 
+export const updatePodcastById = mutation({
+  args: {
+    podcastId: v.id("podcasts"),
+    clerkId: v.string(),
+    authorId: v.string(),
+    audioStorageId: v.optional(v.id("_storage")),
+    podcastTitle: v.optional(v.string()),
+    podcastDescription: v.optional(v.string()),
+    audioUrl: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+    imageStorageId: v.optional(v.id("_storage")),
+    voicePrompt: v.optional(v.string()),
+    imagePrompt: v.optional(v.string()),
+    voiceType: v.optional(v.string()),
+    audioDuration: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("clerkId"), args.clerkId))
+      .unique();
+
+    if (!user) {
+      throw new ConvexError("User not found");
+    }
+
+    if (args.clerkId !== args.authorId) {
+      throw new ConvexError("User not authorized to update this podcast");
+    }
+
+    return await ctx.db.patch(args.podcastId, {
+      audioStorageId: args.audioStorageId,
+      podcastTitle: args.podcastTitle,
+      podcastDescription: args.podcastDescription,
+      audioUrl: args.audioUrl,
+      imageUrl: args.imageUrl,
+      imageStorageId: args.imageStorageId,
+      voicePrompt: args.voicePrompt,
+      imagePrompt: args.imagePrompt,
+      voiceType: args.voiceType,
+      audioDuration: args.audioDuration,
+    });
+  },
+});
+
 // this mutation will update the views of the podcast.
 export const updatePodcastViews = mutation({
   args: {
