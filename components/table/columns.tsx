@@ -54,7 +54,7 @@ export const columns: ColumnDef<PodcastProps>[] = [
       const podcast = row.original;
 
       return (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 md:gap-3">
           <Image
             src="/icons/headphone.svg"
             width={28}
@@ -76,7 +76,7 @@ export const columns: ColumnDef<PodcastProps>[] = [
       const podcast = row.original;
 
       return (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 md:gap-3">
           <Image
             src="/icons/clock.svg"
             width={28}
