@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 import { Id } from "@/convex/_generated/dataModel";
+import { UseFormSetValue } from "react-hook-form";
 
 declare type SearchParamProps = {
   params: { [key: string]: string | Id };
@@ -55,20 +56,13 @@ export interface ProfilePodcastProps {
 
 export interface GeneratePodcastProps {
   voiceType: string;
-  setAudio: Dispatch<SetStateAction<string>>;
-  audio: string;
-  setAudioStorageId: Dispatch<SetStateAction<Id<"_storage"> | null>>;
   voicePrompt: string;
-  setVoicePrompt: Dispatch<SetStateAction<string>>;
-  setAudioDuration: Dispatch<SetStateAction<number>>;
+  setAudio: (val: { url: string; storageId: string }) => void;
 }
 
 export interface GenerateThumbnailProps {
-  setImage: Dispatch<SetStateAction<string>>;
-  setImageStorageId: Dispatch<SetStateAction<Id<"_storage"> | null>>;
-  image: string;
   imagePrompt: string;
-  setImagePrompt: Dispatch<SetStateAction<string>>;
+  setThumbnail: (val: { url: string; storageId: string }) => void;
 }
 
 export interface LatestPodcastCardProps {
