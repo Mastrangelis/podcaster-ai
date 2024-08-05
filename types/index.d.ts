@@ -108,8 +108,7 @@ export interface PodcastCardProps {
   imgUrl: string;
   title: string;
   description: string;
-  author?: string;
-  authorImageUrl?: string;
+  isOwner?: boolean;
   podcastId: Id<"podcasts">;
 }
 

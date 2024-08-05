@@ -59,10 +59,10 @@ const formSchema = z.object({
     prompt: z
       .string()
       .min(100, {
-        message: "Prompt must be at least 100 characters",
+        message: "Audio rompt must be at least 100 characters",
       })
       .max(4096, {
-        message: "Prompt must be between 100 and 4096 characters",
+        message: "Audio prompt must be between 100 and 4096 characters",
       }),
     storageId: z.string({
       required_error: "Please generate audio",
