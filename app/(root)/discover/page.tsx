@@ -9,9 +9,15 @@ import { useQuery } from "convex/react";
 import React from "react";
 import { SearchParamProps } from "@/types";
 import { useUser } from "@clerk/nextjs";
+import * as Sentry from "@sentry/nextjs";
 
 const Discover = ({ searchParams: { search } }: SearchParamProps) => {
   const { user: clerkUser } = useUser();
+
+  Sentry.metrics.set(
+    "discover-podcasts",
+    clerkUser?.emailAddresses[0].emailAddress!
+  );
 
   const podcastsData = useQuery(api.podcasts.getPodcastBySearch, {
     search: (search as string) || "",

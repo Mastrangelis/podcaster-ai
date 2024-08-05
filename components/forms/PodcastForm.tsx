@@ -36,6 +36,7 @@ import useGeneratePodcast from "@/lib/hooks/useGeneratePodcast";
 import useGenerateThumbnail from "@/lib/hooks/useGenerateThumbnail";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
+import * as Sentry from "@sentry/nextjs";
 
 const voiceCategories = ["alloy", "shimmer", "nova", "echo", "fable", "onyx"];
 
@@ -89,6 +90,12 @@ const PodcastForm = ({ podcast, type = "create" }: PodcastFormProps) => {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useUser();
+
+  Sentry.metrics.set("podcast-form", user?.emailAddresses[0].emailAddress!, {
+    tags: {
+      type,
+    },
+  });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
