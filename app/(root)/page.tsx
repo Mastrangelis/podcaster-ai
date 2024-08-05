@@ -31,8 +31,6 @@ const Home = () => {
                   description={podcast.podcastDescription}
                   imgUrl={podcast.imageUrl ?? ""}
                   podcastId={podcast._id}
-                  authorImageUrl={podcast.authorImageUrl}
-                  author={podcast.author}
                 />
               ))}
             </div>
