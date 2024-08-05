@@ -11,6 +11,8 @@
 
 - 🤖 [Introduction](#-introduction)
 - ⚙️ [Tech Stack](#️-tech-stack)
+- 🔋 [Features](#-features)
+- 🔨 [Deployment](#️-deployment)
 - 🤸 [Quick Start](#-quick-start)
 
 </details>
@@ -33,10 +35,43 @@ A cutting-edge AI SaaS platform that enables users to create, discover, and enjo
 - [Shadcn-UI](https://ui.shadcn.com/): Shadcn UI is a React UI library that helps developers rapidly build modern web applications.
 - [Zod](https://zod.dev/): Zod is a TypeScript-first schema declaration and validation library.
 - [Vercel](https://vercel.com/): Vercel is a cloud platform for frontend developers, providing the frameworks, workflows, and infrastructure to build a faster, more personalized Web.
+- [OpenAI](https://openai.com/): OpenAI is known for the GPT family of large language models, the DALL-E series of text-to-image models, and a text-to-video model named Sora.
 
 </details><br/>
 
 [![Technologies Used](https://skillicons.dev/icons?i=ts,nextjs,tailwind,sentry,vercel)](https://skillicons.dev)
+
+## 🔋 Features
+
+👉 Robust Authentication: Secure and reliable user login and registration system using Clerk
+
+👉 Modern Home Page: Showcases trending and latest podcasts with a sticky podcast player for continuous listening.
+
+👉 Discover Podcasts Page: Dedicated page for users to explore new and popular podcasts.
+
+👉 Fully Functional Search: Allows users to find podcasts easily using various search criteria.
+
+👉 Create Podcast Page: Enables podcast creation with text-to-audio conversion, AI image generation, and previews.
+
+👉 Edit Podcast Page: Enables podcast edit for podcasts owners.
+
+👉 Multi Voice AI Functionality: Supports multiple AI-generated voices for dynamic podcast creation.
+
+👉 Profile Page: View all created podcasts with options to delete and edit them.
+
+👉 Podcast Details Page: Displays detailed information about each podcast, including creator details, number of listeners, and transcript.
+
+👉 Podcast Player: Features backward/forward controls, as well as mute/unmute functionality for a seamless listening experience.
+
+👉 Responsive Design: Fully functional and visually appealing across all devices and screen sizes.
+
+👉 Sentry Monirtoring: Integration with Sentry for monitoring and tracing
+
+and many more, including code architecture and reusability
+
+## 🛠️ Deployment
+
+You can check the project live here [devstack_overflow_nextjs14](https://podcaster-ai-tawny.vercel.app/)
 
 ## 🤸 Quick Start
 
