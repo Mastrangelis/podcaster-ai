@@ -81,7 +81,7 @@ const PodcastPlayer = () => {
       audioElement?.pause();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audio?.isPlaying]);
+  }, [audio?.isPlaying, audio?.audioUrl]);
 
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
