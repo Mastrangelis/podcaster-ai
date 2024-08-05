@@ -66,14 +66,19 @@ const PodcastDetailPlayer = ({
   };
 
   const handlePlay = () => {
-    setAudio((prev) => ({
+    if (audio?.audioUrl === audioUrl) {
+      setAudio((prev) => ({ ...prev, isPlaying: !prev?.isPlaying }));
+      return;
+    }
+
+    setAudio({
       title: podcastTitle,
       audioUrl,
       imageUrl,
       author,
       podcastId,
-      isPlaying: !prev?.isPlaying,
-    }));
+      isPlaying: true,
+    });
   };
 
   const onFigureClick = () => {
@@ -83,6 +88,8 @@ const PodcastDetailPlayer = ({
 
     return router.push(`/profile/${authorId}`);
   };
+
+  const isPlaying = audio?.audioUrl === audioUrl && audio?.isPlaying;
 
   if (!imageUrl || !authorImageUrl) return <LoaderSpinner />;
 
@@ -121,14 +128,14 @@ const PodcastDetailPlayer = ({
             className="w-full max-w-[250px] bg-orange-1 font-extrabold text-white-1"
           >
             <Image
-              src={audio?.isPlaying ? "/icons/Pause.svg" : "/icons/Play.svg"}
+              src={isPlaying ? "/icons/Pause.svg" : "/icons/Play.svg"}
               width={20}
               height={20}
               alt="random play"
               className="size-4 md:size-5"
             />
             <span className="text-12 md:text-16">
-              &nbsp; {audio?.isPlaying ? "Pause" : "Play"} podcast
+              &nbsp; {isPlaying ? "Pause" : "Play"} podcast
             </span>
           </Button>
         </div>
@@ -156,7 +163,7 @@ const PodcastDetailPlayer = ({
                   alt="Edit icon"
                 />
                 <h2 className="text-12 md:text-16 font-normal text-white-1">
-                  Edit podcast{" "}
+                  Edit podcast
                 </h2>
               </div>
               <div className="ml-2 border-b border-white-2/50 w-[90%] flex" />

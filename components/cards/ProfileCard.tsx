@@ -1,9 +1,9 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useAudio } from "@/lib/providers/AudioProvider";
-import { PodcastProps, ProfileCardProps } from "@/types";
+import { ProfileCardProps } from "@/types";
 
 import LoaderSpinner from "../LoaderSpinner";
 import { Button } from "../ui/button";
@@ -32,10 +32,8 @@ const ProfileCard = ({
   clerkId,
 }: ProfileCardProps) => {
   const router = useRouter();
-  const { setAudio, audio } = useAudio();
+  const { setAudio } = useAudio();
   const { user } = useClerk();
-
-  const [randomPodcast, setRandomPodcast] = useState<PodcastProps | null>(null);
 
   const [isDeleting, setIsDeleting] = useState(false);
   const deleteUser = useMutation(api.users.deleteUser);
@@ -64,29 +62,15 @@ const ProfileCard = ({
   };
 
   const playRandomPodcast = () => {
-    if (audio?.audioUrl) {
-      setAudio((prev) => ({ ...prev, isPlaying: !prev?.isPlaying }));
-      return;
-    }
-
     const randomIndex = Math.floor(Math.random() * podcastData.podcasts.length);
 
-    setRandomPodcast(podcastData.podcasts[randomIndex]);
+    const randomPodcast = podcastData.podcasts[randomIndex];
+
+    setAudio({
+      ...randomPodcast,
+      isPlaying: true,
+    });
   };
-
-  useEffect(() => {
-    if (!randomPodcast) return;
-
-    setAudio((prev) => ({
-      ...prev,
-      title: randomPodcast.podcastTitle,
-      audioUrl: randomPodcast.audioUrl || "",
-      imageUrl: randomPodcast.imageUrl || "",
-      author: randomPodcast.author,
-      podcastId: randomPodcast._id,
-      isPlaying: !prev?.isPlaying,
-    }));
-  }, [randomPodcast, setAudio]);
 
   if (!imageUrl) return <LoaderSpinner />;
 
@@ -138,14 +122,14 @@ const ProfileCard = ({
               className="bg-orange-1 font-extrabold text-white-1 cursor-pointer"
             >
               <Image
-                src={audio?.isPlaying ? "/icons/Pause.svg" : "/icons/Play.svg"}
+                src="/icons/Play.svg"
                 width={20}
                 height={20}
                 alt="random play"
                 className="size-4 md:size-5"
               />
               <span className="text-12 md:text-16">
-                &nbsp; {audio?.isPlaying ? "Pause" : "Play"} a random podcast
+                &nbsp; Play a user random podcast
               </span>
             </Button>
           )}

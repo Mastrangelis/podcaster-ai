@@ -110,13 +110,9 @@ export const columns: ColumnDef<PodcastProps>[] = [
           return;
         }
 
-        setAudio((prev) => ({
-          ...prev,
-          title: row.original.podcastTitle,
-          audioUrl: row.original.audioUrl,
-          imageUrl: row.original.imageUrl,
-          isPlaying: !prev?.isPlaying,
-        }));
+        debugger;
+
+        setAudio({ ...podcast, isPlaying: true });
       };
 
       return (
