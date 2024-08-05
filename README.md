@@ -71,7 +71,7 @@ and many more, including code architecture and reusability
 
 ## 🛠️ Deployment
 
-You can check the project live here [devstack_overflow_nextjs14](https://podcaster-ai-tawny.vercel.app/)
+You can check the project live here [podcaster-ai](https://podcaster-ai-tawny.vercel.app/)
 
 ## 🤸 Quick Start
 
